@@ -1,23 +1,45 @@
+
 import { useState } from 'react';
 import AddEmployee from './components/AddEmployee';
-import {EmployeeTable} from './components/EmployeeTable';
+import { EmployeeTable } from './components/EmployeeTable';
 import { EmployeeValues } from './types/types';
+import axios from 'axios';
 
 const App = () => {
   const [employees, setEmployees] = useState<EmployeeValues[]>([]);
 
-  const handleAddUser = (newEmployee: EmployeeValues) => {
-    setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
+  const handleAddUser = async (newEmployee: EmployeeValues) => {
+  
+    await axios.post('http://localhost:3000/post', newEmployee);
+
+    getAllEmployees();
   };
 
-  const handleDelete = (id: number) => {
-    setEmployees((prevEmployees) => prevEmployees.filter((employee) => employee.id !== id));
+  const getAllEmployees = async () => {
+
+    const response = await axios.get('http://localhost:3000/get');
+
+    setEmployees(response.data);
+
   };
+
+  const handleDelete = async (id: number) => {
+
+    await axios.delete(`http://localhost:3000/delete/${id}`);
+
+    getAllEmployees();
+
+  };
+
+  
+  getAllEmployees();
+ 
+
   return (
     <>
       <AddEmployee onAddUser={handleAddUser} />
-      
-      <EmployeeTable employees={employees} onDelete={handleDelete}/>
+
+      <EmployeeTable employees={employees} onDelete={handleDelete} />
     </>
   );
 };
