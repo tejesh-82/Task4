@@ -1,40 +1,39 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddEmployee from './components/AddEmployee';
 import { EmployeeTable } from './components/EmployeeTable';
 import { EmployeeValues } from './types/types';
-import axios from 'axios';
+import { getEmployees, addEmployee, deleteEmployee } from './ApiCalls/Api';
 
 const App = () => {
   const [employees, setEmployees] = useState<EmployeeValues[]>([]);
 
   const handleAddUser = async (newEmployee: EmployeeValues) => {
   
-    await axios.post('http://localhost:3000/post', newEmployee);
+    await addEmployee(newEmployee);
 
     getAllEmployees();
-  };
+  }
 
   const getAllEmployees = async () => {
 
-    const response = await axios.get('http://localhost:3000/get');
-
-    setEmployees(response.data);
+    const response:EmployeeValues[] = await getEmployees();
+    console.log(response)
+    setEmployees(response);
 
   };
+       
 
   const handleDelete = async (id: number) => {
 
-    await axios.delete(`http://localhost:3000/delete/${id}`);
-
+    await deleteEmployee(id);
     getAllEmployees();
 
   };
 
-  
-  getAllEmployees();
- 
-
+useEffect (()=>{
+  getAllEmployees()
+},[])
   return (
     <>
       <AddEmployee onAddUser={handleAddUser} />

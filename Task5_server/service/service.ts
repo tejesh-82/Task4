@@ -1,6 +1,6 @@
 import EmployeeModel from '../schema/schema';
 
-const Postdata = (props:any) => {
+const Postdata = async(props:any) => {   
   const data=new EmployeeModel(props);
   return data.save();
 }
